@@ -16,7 +16,7 @@ class Solution {
         return answer;
     }
     
-        public static boolean isPrime(int num){
+    public boolean isPrime(int num){
         if(num == 0 || num == 1)return false;
         int max = (int)Math.sqrt(num);
             
@@ -27,8 +27,8 @@ class Solution {
         return true;
     }
     
-        public static void bfs(String first, String second){
-
+    public void bfs(String first, String second){
+            
         if(!first.equals("")){
             numbersSet.add(Integer.valueOf(first));
         }
