@@ -1,41 +1,41 @@
-import sys
+import copy
 from collections import deque
-input = sys.stdin.readline
-N, M = map(int, input().split())
-graph = [list(map(int, input().rstrip())) for _ in range(N)]
 
-# index 0층: 벽을 안 부수고 가는 경로
-# index 1층: 벽을 부수고 가는 경로
-move = [[[0, 0] for _ in range(M)] for _ in range(N)]
+n, m = map(int, input().split())
 
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
+board = [list(map(int, list(input()))) for _ in range(n)]
+
+d = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+q = deque([(0, 0, 0)])
+visited = [[[0] * 2 for _ in range(m)] for _ in range(n)]
+visited[0][0][0] = 1
 
 
-def BFS(x, y):
-    queue = deque([(x, y, 0)])  # x좌표, y좌표, 부순 횟수
-    move[y][x][0] = 1
+def bfs():
+    while q:
+        cx, cy, block_count = q.popleft()
 
-    while queue:
-        x, y, break_cnt = queue.popleft()
+        if (cx, cy) == (n - 1, m - 1):
+            return visited[cx][cy][block_count]
 
-        if (x, y) == (M-1, N-1):
-            return move[y][x][break_cnt]
+        for dx, dy in d:
+            nx = cx + dx
+            ny = cy + dy
 
-        for i in range(4):
-            next_x, next_y = x+dx[i], y+dy[i]
-            if 0 <= next_x < M and 0 <= next_y < N:  # 범위 확인
+            if 0 <= nx < n and 0 <= ny < m:
 
-                # 벽인 경우 벽을 부순다.
-                if graph[next_y][next_x] == 1 and break_cnt == 0:
-                    move[next_y][next_x][1] = move[y][x][0] + 1  # 기존 graph는 유지
-                    queue.append([next_x, next_y, 1])
+                # 벽이고 벽을 부순적이 없을 경우
+                if board[nx][ny] == 1 and block_count == 0:
+                    visited[nx][ny][1] = visited[cx][cy][0] + 1
+                    q.append((nx, ny, 1))
 
-                # 이동 가능하며, 해당 break_cnt 층에서 아직 방문하지 않은 경우
-                if graph[next_y][next_x] == 0 and move[next_y][next_x][break_cnt] == 0:
-                    move[next_y][next_x][break_cnt] = move[y][x][break_cnt] + 1
-                    queue.append([next_x, next_y, break_cnt])
+                # 벽이 아니고 방문한 적이 없는 경우
+                elif board[nx][ny] == 0 and visited[nx][ny][block_count] == 0:
+                    visited[nx][ny][block_count] = visited[cx][cy][block_count] + 1
+                    q.append((nx, ny, block_count))
+
     return -1
 
 
-print(BFS(0, 0))
+print(bfs())
