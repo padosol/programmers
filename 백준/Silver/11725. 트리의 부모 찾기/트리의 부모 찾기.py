@@ -1,6 +1,8 @@
 import sys
 sys.setrecursionlimit(10**6)
 
+input = sys.stdin.readline
+
 N = int(input())
 
 graph = [[] for _ in range(N + 1)]
@@ -12,15 +14,12 @@ for i in range(1, N):
 
 
 root = [0 for _ in range(N + 1)]
-visited = [False for _ in range(N + 1)]
-
 
 def dfs(node):
     global visited
     global root
     for n in graph[node]:
-        if not visited[n]:
-            visited[n] = True
+        if root[n] == 0:
             root[n] = node
             dfs(n)
 
