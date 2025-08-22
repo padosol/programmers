@@ -18,7 +18,7 @@ for _ in range(n):
     elif command == 'toggle':
         check = S & (1 << int(arr[1]))
         if check:
-            S ^= (1 << int(arr[1]))
+            S &= ~(1 << int(arr[1]))
         else:
             S |= (1 << int(arr[1]))
     elif command == 'all':
