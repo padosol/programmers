@@ -1,27 +1,21 @@
+from collections import defaultdict
+def to_value(today):
+    year, month, day = today.split(".")
+    return int(year) * 12 * 28 + int(month) * 28 + int(day)
+
 def solution(today, terms, privacies):
-    def day_count_from_start_day(year, month, day):
-        start_year = 2000
-        start_month = 1
-        start_day = 1
-        month_day = 28
-        year_day = month_day * 12
-
-        return (year - start_year) * year_day + (month - start_month) * month_day + (day - start_day)
-
-    privacy_map = {}
-    for t in terms:
-        p, d = t.split(" ")
-        privacy_map[p] = int(d)
-
-    today_split = list(map(int, today.split(".")))
-    today_count = day_count_from_start_day(today_split[0], today_split[1], today_split[2])
     answer = []
-    for i, p in enumerate(privacies):
-        local_date, privacy = p.split(" ")
-        count = privacy_map[privacy] * 28
+    today = to_value(today)
+    term_data = defaultdict(int)
+    for term in terms:
+        t, v = term.split(" ")
+        term_data[t] = int(v) * 28
 
-        local_date_split = list(map(int, local_date.split(".")))
-        local_count = day_count_from_start_day(local_date_split[0], local_date_split[1], local_date_split[2])
-        if today_count - local_count >= count:
+    for i, privacy in enumerate(privacies):
+        privacy_today, privacy_type = privacy.split(" ")
+        p_today_value = to_value(privacy_today)
+        p_term_value = term_data[privacy_type]
+        if p_today_value + p_term_value <= today:
             answer.append(i + 1)
+
     return answer
