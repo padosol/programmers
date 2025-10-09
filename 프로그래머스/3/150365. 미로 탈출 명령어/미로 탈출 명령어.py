@@ -1,32 +1,32 @@
 from collections import deque
-
 def solution(n, m, x, y, r, c, k):
-    answer = ''
-    # 남은 거리 탐색 자주 해주어야 하므로 함수로 빼주기
-    def manhattan(x1, y1):
-        return abs(x1 - (r-1)) + abs(y1-(c-1))
-
-    # k가 최단 거리보다 작거나, 최단 거리 - k가 홀수라면 도착지에 k번만에 도착 불가
-    if manhattan(x-1, y-1) > k or (manhattan(x-1, y-1) - k) % 2:
-        return 'impossible'
-    # 탐색 방향 사전순으로 - d l r u
-    direct = {(1,0):'d', (0,-1):'l', (0,1):'r', (-1,0):'u'}
+    answer = 'impossible'
+    # 문자열 순이니깐 방향을 문자열 순서로 움직이면 됨
+    # 0 < x <= n, 0 < y <= m
+    # d 아래, l 왼쪽, r 오른쪽 u 위
+    d = [(1, 0, 'd'), (0, -1, 'l'), (0, 1, 'r'), (-1, 0, 'u')]
     q = deque()
-    q.append((x-1, y-1, 0, ''))
+    q.append((x,y,'', 0))
+
     while q:
-        si, sj, cnt, route = q.popleft()
+        sx, sy, value, cnt = q.popleft()
+
         # 도착했는데 남은 거리가 홀수라면 도착지에 k만큼 오지 못한다!
-        if (si, sj) == (r-1, c-1) and (k-cnt) % 2:
+        if (sx, sy) == (r, c) and (k - cnt) % 2:
             return 'impossible'
-        elif (si, sj) == (r-1, c-1) and cnt == k:
-            return route
-        for di, dj in direct:
-            ni, nj = si+di, sj+dj
-            if 0<=ni<n and 0<=nj<m:
-                # 다음 이동 자리를 보는 것이므로 +1 을 해주어야 함
-                if manhattan(ni, nj) + cnt + 1 > k:
+        elif (sx, sy) == (r, c) and cnt == k:
+            return value
+
+        for i in range(4):
+            nsx = sx + d[i][0]
+            nsy = sy + d[i][1]
+            nv = value + d[i][2]
+            n_cnt = cnt + 1
+
+            if 0 < nsx <= n and 0 < nsy <= m:
+                if abs(nsx - r) + abs(nsy - c) + n_cnt > k:
                     continue
-                q.append((ni, nj, cnt+1, route+direct[(di, dj)]))
+                q.append((nsx, nsy, nv, n_cnt))
                 break
 
     return answer
