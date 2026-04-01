@@ -4,46 +4,50 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int n, k, answer;
-    static int[] arr;
-    static boolean[] visit;
-    //static int[] ansArr;
-    // public static StringBuilder sb = new StringBuilder();
+    static int N, K;
+    static int[] kits;
+    static boolean[] visited;
+    static int count = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
 
-        st = new StringTokenizer(br.readLine());
-        arr = new int[n];
-        // ansArr = new int[n];
-        for(int i=0; i<n; i++){
-            arr[i]=Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+
+        kits = new int[N];
+        visited = new boolean[N];
+
+        st = new StringTokenizer(br.readLine(), " ");
+        for (int i = 0; i < N; i++) {
+            kits[i] = Integer.parseInt(st.nextToken());
         }
-        visit=new boolean[n];
-        answer=0;
-        dfs(500, 0);
-        System.out.println(answer);
-        // System.out.println(sb);
+
+        backtracking(500, 0);
+
+        System.out.println(count);
     }
 
-    public static void dfs(int sum, int cnt){
-        if(cnt == n){
-            answer++;
-            // for(int val:ansArr) sb.append(val).append(" ");
-            // sb.append("\n");
+    public static void backtracking(int weight, int depth) {
+
+        if (depth == N) {
+            count++;
             return;
         }
-        for(int i=0; i<n; i++){
-            if(!visit[i] && sum+arr[i]-k >= 500) {
-                visit[i]=true;
-                // ansArr[cnt]=i+1;
-                dfs(sum+arr[i]-k, cnt+1);
-                visit[i]=false;
+
+        for (int i = 0; i < N; i++) {
+            if (!visited[i]) {
+                int nextWeight = weight + kits[i] - K;
+
+                if (nextWeight >= 500) {
+                    visited[i] = true;
+                    backtracking(nextWeight, depth + 1);
+                    visited[i] = false;
+                }
             }
         }
+
     }
+
 }
