@@ -17,7 +17,6 @@ class Solution {
         boolean[][] visited = new boolean[endY + 1][endX + 1];
         visited[0][0] = true;
 
-        boolean success = false;
         while(!q.isEmpty()) {
           int[] position = q.pop();
           int x = position[0];
@@ -25,9 +24,7 @@ class Solution {
           int c = position[2];
 
           if (x == endX && y == endY) {
-            count = c;
-            success = true;
-            break;
+            return c + 1;
           }
 
           for (int[] d : directions) {
@@ -45,6 +42,6 @@ class Solution {
           }
         }
         
-        return success ? count + 1 : -1;
+        return -1;
     }
 }
