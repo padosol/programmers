@@ -1,66 +1,50 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 class Solution {
+    static int endX;
+    static int endY;
+    static int count = 0;
+    
     public int solution(int[][] maps) {
-        int answer = 0;
-        int xMax = maps.length - 1;
-        int yMax = maps[0].length - 1;
-        
-        boolean success = false;
+        endX = maps[0].length - 1;
+        endY = maps.length - 1;
 
+        Deque<int[]> q = new ArrayDeque<>();
+        q.add(new int[]{0,0,0});
 
-        boolean[][] visited = new boolean[maps.length][maps[0].length];
-
-        Queue<int[]> position = new LinkedList<>();
-        position.add(new int[]{0,0});
+        int[][] directions = {{0, -1}, {0 ,1}, {1, 0}, {-1, 0}};
+        boolean[][] visited = new boolean[endY + 1][endX + 1];
         visited[0][0] = true;
 
-        while(!position.isEmpty()) {
+        boolean success = false;
+        while(!q.isEmpty()) {
+          int[] position = q.pop();
+          int x = position[0];
+          int y = position[1];
+          int c = position[2];
 
-            int size = position.size();
+          if (x == endX && y == endY) {
+            count = c;
+            success = true;
+            break;
+          }
 
-            for(int i=0;i<size;i++) {
+          for (int[] d : directions) {
+            int nx = x + d[0];
+            int ny = y + d[1];
 
-                int[] map = position.poll();
+            if (0 <= nx && nx <= endX && 0 <= ny && ny <= endY && maps[ny][nx] == 1) {
+              if (visited[ny][nx]) {
+                continue;
+              }
 
-                int x = map[0];
-                int y = map[1];
-
-                if( x == xMax && y == yMax) {
-                    success = true;
-                    position.clear();
-                    break;
-                }
-
-                // 상
-                if( x - 1 >= 0 && maps[x-1][y] == 1 && !visited[x-1][y]) {
-                    visited[x-1][y] = true;
-                    position.add(new int[]{x-1, y});
-                }
-
-                // 하
-                if( x + 1 <= xMax && maps[x+1][y] == 1 && !visited[x+1][y]) {
-                    visited[x+1][y] = true;
-                    position.add(new int[]{x+1, y});
-                }
-
-                // 좌
-                if(y-1 >= 0 && maps[x][y-1] == 1 && !visited[x][y-1]) {
-                    visited[x][y-1] = true;
-                    position.add(new int[]{x, y-1});
-                }
-
-                // 우
-                if( y + 1 <= yMax && maps[x][y + 1] == 1 && !visited[x][y+1]) {
-                    visited[x][y+1] = true;
-                    position.add(new int[]{x, y+1});
-                }
+              visited[ny][nx] = true;
+              q.add(new int[]{nx, ny, c + 1});
             }
-
-            answer++;
+          }
         }
         
-        return success?answer:-1;
+        return success ? count + 1 : -1;
     }
 }
